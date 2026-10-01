@@ -23,7 +23,7 @@ const inMemoryStore = {
   issues: []
 };
 
-// Utility functions to read/write JSON DB files with Vercel serverless fallback
+// Utility functions to read/write JSON DB files
 function readData(file, defaultData = []) {
   const filePath = path.join(DB_DIR, file);
   try {
@@ -49,7 +49,6 @@ function writeData(file, data) {
     }
     return true;
   } catch (err) {
-    // In Vercel serverless, disk is read-only, inMemoryStore handles transient requests
     return true;
   }
 }
@@ -60,8 +59,8 @@ app.get('/api/settings', (req, res) => {
     companyName: process.env.COMPANY_NAME || 'TechHarmonix',
     logoUrl: process.env.LOGO_URL || 'https://www.techharmonix.com/_next/image?url=%2Fimages%2Flogo%2FLogo.png&w=256&q=75',
     primaryColor: '#1e3a8a',
-    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',
-    telegramChatId: process.env.TELEGRAM_CHAT_ID || '',
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '8411898463:AAH4QfLEPGOxXA7S4ooScS3FlIwqerfa0DM',
+    telegramChatId: process.env.TELEGRAM_CHAT_ID || '-5433935836',
     enableTelegramAutoSend: true
   });
   res.json(settings);
@@ -81,15 +80,15 @@ app.post('/api/telegram/test', async (req, res) => {
   try {
     const { botToken, chatId } = req.body;
     const settings = readData('settings.json', {});
-    const token = botToken || settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN;
-    const chat = chatId || settings.telegramChatId || process.env.TELEGRAM_CHAT_ID;
+    const token = botToken || settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN || '8411898463:AAH4QfLEPGOxXA7S4ooScS3FlIwqerfa0DM';
+    const chat = chatId || settings.telegramChatId || process.env.TELEGRAM_CHAT_ID || '-5433935836';
 
     if (!token || !chat) {
       return res.status(400).json({ success: false, error: 'Please enter both Telegram Bot Token and Chat ID.' });
     }
 
-    const testMsg = `<b>🤖 TechHarmonix DigiCheck Telegram Bot Connected on Vercel!</b>\n\n` +
-      `Your Vercel cloud deployment is active and connected to Telegram. Inspection PDF reports will be sent here automatically.`;
+    const testMsg = `<b>🤖 TechHarmonix DigiCheck Telegram Bot Connected!</b>\n\n` +
+      `Your Telegram integration is active. Inspection reports will be automatically posted here upon completion.`;
 
     await sendTelegramMessage(token, chat, testMsg);
     res.json({ success: true, message: 'Test message sent successfully to Telegram!' });
@@ -111,8 +110,8 @@ app.post('/api/telegram/send-pdf-report/:submissionId', async (req, res) => {
     }
 
     const settings = readData('settings.json', {});
-    const token = settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN;
-    const chat = settings.telegramChatId || process.env.TELEGRAM_CHAT_ID;
+    const token = settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN || '8411898463:AAH4QfLEPGOxXA7S4ooScS3FlIwqerfa0DM';
+    const chat = settings.telegramChatId || process.env.TELEGRAM_CHAT_ID || '-5433935836';
 
     if (!token || !chat) {
       return res.status(400).json({ success: false, error: 'Telegram Bot Token or Chat ID not configured.' });
@@ -204,7 +203,7 @@ app.post('/api/submissions', async (req, res) => {
   submissions.unshift(newSub);
   writeData('submissions.json', submissions);
 
-  // Auto-generate issues for failed items
+  // Auto-generate issue tickets for failed items
   if (newSub.answers) {
     const issues = readData('issues.json', []);
     let newIssuesCreated = false;
@@ -233,6 +232,31 @@ app.post('/api/submissions', async (req, res) => {
     }
   }
 
+  // AUTOMATIC TELEGRAM REPORT DISPATCH ON SUBMISSION
+  const settings = readData('settings.json', {});
+  const token = settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN || '8411898463:AAH4QfLEPGOxXA7S4ooScS3FlIwqerfa0DM';
+  const chat = settings.telegramChatId || process.env.TELEGRAM_CHAT_ID || '-5433935836';
+
+  if (token && chat && settings.enableTelegramAutoSend !== false) {
+    try {
+      const caption = formatInspectionTelegramMessage(newSub, settings.companyName || 'TechHarmonix');
+      
+      if (newSub.pdfBase64) {
+        const cleanBase64 = newSub.pdfBase64.replace(/^data:application\/pdf;base64,/, "");
+        const pdfBuffer = Buffer.from(cleanBase64, 'base64');
+        const filename = `DigiCheck_${newSub.id}_Report.pdf`;
+        await sendTelegramDocument(token, chat, pdfBuffer, filename, caption);
+      } else {
+        await sendTelegramMessage(token, chat, caption);
+      }
+
+      newSub.telegramSent = true;
+      writeData('submissions.json', submissions);
+    } catch (err) {
+      console.error('Telegram auto-dispatch error:', err);
+    }
+  }
+
   res.json({ success: true, submission: newSub });
 });
 
@@ -252,7 +276,6 @@ app.put('/api/issues/:id', (req, res) => {
   res.json({ success: true, issue: issues[idx] });
 });
 
-// Export app for Vercel Serverless Function & local listener
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`DigiCheck Express Server running on port ${PORT}`);

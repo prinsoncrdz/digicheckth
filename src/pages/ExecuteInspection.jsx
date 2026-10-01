@@ -39,11 +39,9 @@ export default function ExecuteInspection() {
   const [errorMsg, setErrorMsg] = useState('');
   const [settings, setSettings] = useState({});
 
-  // Mobile App Mode: 1 question per screen wizard vs Full Web List view
-  const [viewMode, setViewMode] = useState('wizard'); // 'wizard' (1 Q per screen) or 'list'
+  const [viewMode, setViewMode] = useState('wizard');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // Voice state
   const [isListening, setIsListening] = useState(false);
   const [activeMicItemId, setActiveMicItemId] = useState(null);
 
@@ -62,7 +60,6 @@ export default function ExecuteInspection() {
       }
       if (chosenTpl) selectTemplate(chosenTpl);
 
-      // Voice greeting on audit start
       speakText(`Welcome to ${stgs.companyName || 'TechHarmonix'} DigiCheck Office Audit.`);
     }).catch(() => {});
   }, [templateIdParam]);
@@ -85,7 +82,6 @@ export default function ExecuteInspection() {
     setCurrentQuestionIndex(0);
   };
 
-  // Flattened array of all items across sections for the 1-Question-Per-Screen Wizard
   const allQuestions = selectedTemplate?.sections?.flatMap(sec => 
     sec.items.map(item => ({ ...item, sectionTitle: sec.title }))
   ) || [];
@@ -104,7 +100,6 @@ export default function ExecuteInspection() {
     }));
   };
 
-  // Handle Evidence Photo Upload & Burn Timestamp Watermark
   const handlePhotoUpload = async (itemId, e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -121,7 +116,6 @@ export default function ExecuteInspection() {
     }
   };
 
-  // Hands-free Voice Dictation for Notes
   const toggleVoiceDictation = (itemId) => {
     if (isListening && activeMicItemId === itemId) {
       setIsListening(false);
@@ -146,7 +140,6 @@ export default function ExecuteInspection() {
     );
   };
 
-  // Live score calculation
   const calculateScore = () => {
     let earned = 0;
     let totalPossible = 0;
@@ -184,6 +177,30 @@ export default function ExecuteInspection() {
     setSubmitting(true);
     setErrorMsg('');
 
+    // Pre-generate PDF report base64 for instant Telegram attachment
+    let pdfBase64 = '';
+    try {
+      const tempSub = {
+        id: `temp_${Date.now()}`,
+        templateTitle: selectedTemplate.title,
+        inspectorName: inspectorName.trim(),
+        location: location.trim(),
+        score: stats.score,
+        totalItems: stats.total,
+        passedItems: stats.passed,
+        failedItems: stats.failed,
+        answers: answers,
+        signature: signature,
+        submittedAt: new Date().toISOString()
+      };
+      const doc = generateInspectionPDF(tempSub, settings, false);
+      if (doc) {
+        pdfBase64 = doc.output('datauristring');
+      }
+    } catch (pdfErr) {
+      console.warn('PDF generation preview warning:', pdfErr);
+    }
+
     const submissionPayload = {
       templateId: selectedTemplate.id,
       templateTitle: selectedTemplate.title,
@@ -195,11 +212,11 @@ export default function ExecuteInspection() {
       failedItems: stats.failed,
       naItems: stats.na,
       answers: answers,
-      signature: signature
+      signature: signature,
+      pdfBase64: pdfBase64
     };
 
     try {
-      // 1. Save submission to backend API
       const res = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -208,22 +225,7 @@ export default function ExecuteInspection() {
       const data = await res.json();
       
       if (data.success) {
-        // 2. Client side PDF generation & direct Telegram PDF upload
-        try {
-          const doc = generateInspectionPDF(data.submission, settings, false); // generate jsPDF instance
-          if (doc) {
-            const pdfBase64 = doc.output('datauristring');
-            await fetch(`/api/telegram/send-pdf-report/${data.submission.id}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ pdfBase64 })
-            });
-          }
-        } catch (pdfErr) {
-          console.error('PDF Telegram auto-send error:', pdfErr);
-        }
-
-        speakText(`Audit completed with score of ${stats.score.toFixed(0)} percent.`);
+        speakText(`Audit completed with score of ${stats.score.toFixed(0)} percent. Report sent to Telegram.`);
         if (stats.score >= 90) {
           confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
@@ -245,7 +247,7 @@ export default function ExecuteInspection() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       
-      {/* View Switcher Bar (Mobile 1 Q Per Screen vs Web Scrollable List) */}
+      {/* View Switcher Bar */}
       <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center space-x-2">
           <label className="text-xs font-bold text-gray-500 uppercase">View Mode:</label>
@@ -310,13 +312,11 @@ export default function ExecuteInspection() {
       {viewMode === 'wizard' && currentQ && (
         <div className="bg-white rounded-3xl border-2 border-blue-500/20 p-6 sm:p-8 shadow-xl space-y-6 animate-fade-in relative">
           
-          {/* Step indicator */}
           <div className="flex items-center justify-between text-xs font-bold text-gray-400 border-b border-gray-100 pb-3">
             <span className="uppercase text-blue-600 tracking-wider font-extrabold">{currentQ.sectionTitle}</span>
             <span>Question {currentQuestionIndex + 1} of {allQuestions.length}</span>
           </div>
 
-          {/* Question Text & Voice Read Button */}
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-3">
               <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">
@@ -333,7 +333,6 @@ export default function ExecuteInspection() {
             </div>
           </div>
 
-          {/* Pass / Fail / NA Big Mobile Buttons */}
           <div className="grid grid-cols-3 gap-3 pt-2">
             <button
               type="button"
@@ -372,7 +371,6 @@ export default function ExecuteInspection() {
             </button>
           </div>
 
-          {/* Notes & Hands-free Microphone Voice Button */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-gray-600">Notes / Remarks</label>
@@ -401,7 +399,6 @@ export default function ExecuteInspection() {
             />
           </div>
 
-          {/* Photo Evidence with Watermarked Timestamp */}
           {answers[currentQ.id]?.status === 'fail' && (
             <div className="p-4 bg-red-50/70 border border-red-200 rounded-2xl space-y-3">
               <label className="block text-xs font-bold text-red-900 uppercase flex items-center gap-1.5">
@@ -428,7 +425,6 @@ export default function ExecuteInspection() {
             </div>
           )}
 
-          {/* Navigation Controls for Mobile 1 Question per Screen */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <button
               type="button"
@@ -456,7 +452,7 @@ export default function ExecuteInspection() {
         </div>
       )}
 
-      {/* FULL WEB LIST MODE (Scrollable list of all sections) */}
+      {/* FULL WEB LIST MODE */}
       {viewMode === 'list' && (
         <div className="space-y-6">
           {selectedTemplate.sections?.map((sec) => (
@@ -523,7 +519,7 @@ export default function ExecuteInspection() {
         </div>
       )}
 
-      {/* Final Submit & Send PDF to Telegram */}
+      {/* Final Submit Bar */}
       <button
         type="button"
         onClick={handleSubmit}
@@ -531,7 +527,7 @@ export default function ExecuteInspection() {
         className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-base rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
       >
         <Send className="w-5 h-5" />
-        {submitting ? 'Submitting & Dispatching PDF to Telegram...' : 'Complete Audit & Send PDF Report to Telegram'}
+        {submitting ? 'Submitting & Dispatching PDF to Telegram...' : 'Complete Audit & Auto-Send PDF Report to Telegram'}
       </button>
     </div>
   );
