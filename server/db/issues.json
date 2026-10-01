@@ -1,0 +1,26 @@
+[
+  {
+    "id": "iss_501",
+    "submissionId": "sub_1001",
+    "itemLabel": "Hand soap dispensers refilled and fully functional",
+    "location": "Main HQ - Floor 3 (East Wing Male Restroom)",
+    "priority": "High",
+    "assignee": "Janitorial Team",
+    "dueDate": "2026-10-02",
+    "status": "Open",
+    "notes": "East wing male restroom dispenser empty",
+    "createdAt": "2026-10-01T09:30:00.000Z"
+  },
+  {
+    "id": "iss_502",
+    "submissionId": "sub_1001",
+    "itemLabel": "Under-desk power cables organized without tripping risk",
+    "location": "Main HQ - Floor 3 (Desk 34)",
+    "priority": "Medium",
+    "assignee": "IT Ops",
+    "dueDate": "2026-10-03",
+    "status": "In Progress",
+    "notes": "Desk 34 trailing cable needs tie",
+    "createdAt": "2026-10-01T09:30:00.000Z"
+  }
+]

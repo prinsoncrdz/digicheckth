@@ -1,0 +1,10 @@
+{
+  "appId": "com.techharmonix.digicheck",
+  "appName": "DigiCheck TechHarmonix",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}

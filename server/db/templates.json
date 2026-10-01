@@ -1,0 +1,213 @@
+[
+  {
+    "id": "tpl_office_cleaning_hygiene",
+    "title": "Comprehensive Office Cleaning & Toilet Sanitation Audit",
+    "category": "Cleaning & Hygiene",
+    "description": "Detailed daily/weekly inspection of restrooms, workstations, pantry, common areas, and waste disposal.",
+    "icon": "Sparkles",
+    "createdAt": "2026-10-01T10:00:00.000Z",
+    "updatedAt": "2026-10-01T10:00:00.000Z",
+    "sections": [
+      {
+        "id": "sec_restroom",
+        "title": "🚽 Restrooms & Toilets Sanitation",
+        "description": "Mandatory hygiene check for male, female, and accessible restrooms.",
+        "items": [
+          {
+            "id": "item_toilet_bowls",
+            "label": "Toilet bowls & urinals sanitized, descaled, and stain-free",
+            "type": "pass_fail",
+            "weight": 10,
+            "required": true
+          },
+          {
+            "id": "item_soap_dispenser",
+            "label": "Hand soap dispensers refilled and fully functional",
+            "type": "pass_fail",
+            "weight": 8,
+            "required": true
+          },
+          {
+            "id": "item_paper_dryer",
+            "label": "Hand paper towels stocked & hand dryers operating properly",
+            "type": "pass_fail",
+            "weight": 8,
+            "required": true
+          },
+          {
+            "id": "item_mirrors_counter",
+            "label": "Mirrors, sinks & faucets polished without water spots",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": false
+          },
+          {
+            "id": "item_restroom_floor",
+            "label": "Restroom floors mopped with disinfectant & dry (no slip hazard)",
+            "type": "pass_fail",
+            "weight": 10,
+            "required": true
+          },
+          {
+            "id": "item_restroom_trash",
+            "label": "Sanitary bins emptied & fresh bags lined",
+            "type": "pass_fail",
+            "weight": 8,
+            "required": true
+          },
+          {
+            "id": "item_restroom_odor",
+            "label": "Restrooms free of foul odor & air freshener active",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "sec_workstations",
+        "title": "🧼 Workstation & Desk Hygiene",
+        "description": "General office floor & desk sanitation check.",
+        "items": [
+          {
+            "id": "item_desk_dusting",
+            "label": "Desk surfaces wiped and dust-free",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": true
+          },
+          {
+            "id": "item_desk_trash",
+            "label": "Personal desk waste bins emptied",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": false
+          },
+          {
+            "id": "item_monitors_keyboards",
+            "label": "Shared monitors, keyboards & mice disinfected",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": false
+          },
+          {
+            "id": "item_cable_safety",
+            "label": "Under-desk power cables organized without tripping risk",
+            "type": "pass_fail",
+            "weight": 7,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "sec_pantry",
+        "title": "☕ Pantry & Breakroom Sanitation",
+        "description": "Kitchenette, coffee machine, fridge, and eating area health check.",
+        "items": [
+          {
+            "id": "item_pantry_fridge",
+            "label": "Refrigerator interior clean, no expired food items left",
+            "type": "pass_fail",
+            "weight": 6,
+            "required": true
+          },
+          {
+            "id": "item_microwave_coffee",
+            "label": "Microwaves, coffee machines & water dispensers cleaned & sanitized",
+            "type": "pass_fail",
+            "weight": 8,
+            "required": true
+          },
+          {
+            "id": "item_sink_dishes",
+            "label": "Sink clear of dirty dishes; dish soap & sponge stocked",
+            "type": "pass_fail",
+            "weight": 7,
+            "required": true
+          },
+          {
+            "id": "item_dining_tables",
+            "label": "Pantry tables wiped clean with antibacterial spray",
+            "type": "pass_fail",
+            "weight": 6,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "sec_waste_floors",
+        "title": "🧹 Common Area Floors & Waste Management",
+        "description": "Hallways, carpet vacuuming, glass doors, and central recycling.",
+        "items": [
+          {
+            "id": "item_carpet_floor",
+            "label": "Carpets vacuumed & hard floors mopped across all office zones",
+            "type": "pass_fail",
+            "weight": 10,
+            "required": true
+          },
+          {
+            "id": "item_glass_doors",
+            "label": "Main entry glass doors & partitions free of smudge/fingerprints",
+            "type": "pass_fail",
+            "weight": 5,
+            "required": false
+          },
+          {
+            "id": "item_central_trash",
+            "label": "Central office waste & recycling stations emptied to main dumpster",
+            "type": "pass_fail",
+            "weight": 8,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tpl_office_safety_fire",
+    "title": "Office Safety & Fire Preparedness Walkthrough",
+    "category": "Safety & Compliance",
+    "description": "Inspection of fire extinguishers, exit signs, first aid kits, and emergency pathways.",
+    "icon": "ShieldAlert",
+    "createdAt": "2026-10-01T10:00:00.000Z",
+    "updatedAt": "2026-10-01T10:00:00.000Z",
+    "sections": [
+      {
+        "id": "sec_fire_safety",
+        "title": "🧯 Fire & Emergency Equipment",
+        "description": "Verify all life-safety devices are accessible and certified.",
+        "items": [
+          {
+            "id": "item_extinguishers",
+            "label": "Fire extinguishers present, pressure gauge in GREEN zone, unblocked",
+            "type": "pass_fail",
+            "weight": 15,
+            "required": true
+          },
+          {
+            "id": "item_exit_routes",
+            "label": "Emergency exit doors & stairwells completely clear of boxes/obstacles",
+            "type": "pass_fail",
+            "weight": 15,
+            "required": true
+          },
+          {
+            "id": "item_exit_lights",
+            "label": "Illuminated EXIT signs functioning properly",
+            "type": "pass_fail",
+            "weight": 10,
+            "required": true
+          },
+          {
+            "id": "item_first_aid",
+            "label": "First Aid kit fully stocked with non-expired bandages & antiseptics",
+            "type": "pass_fail",
+            "weight": 10,
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+]

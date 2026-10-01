@@ -1,0 +1,38 @@
+[
+  {
+    "id": "sub_1001",
+    "templateId": "tpl_office_cleaning_hygiene",
+    "templateTitle": "Comprehensive Office Cleaning & Toilet Sanitation Audit",
+    "inspectorName": "Sarah Jenkins (Facility Lead)",
+    "location": "Main HQ - Floor 3",
+    "status": "Completed",
+    "score": 92.5,
+    "totalItems": 18,
+    "passedItems": 16,
+    "failedItems": 2,
+    "naItems": 0,
+    "answers": {
+      "item_toilet_bowls": { "status": "pass", "notes": "" },
+      "item_soap_dispenser": { "status": "fail", "notes": "East wing male restroom dispenser empty" },
+      "item_paper_dryer": { "status": "pass", "notes": "" },
+      "item_mirrors_counter": { "status": "pass", "notes": "" },
+      "item_restroom_floor": { "status": "pass", "notes": "" },
+      "item_restroom_trash": { "status": "pass", "notes": "" },
+      "item_restroom_odor": { "status": "pass", "notes": "" },
+      "item_desk_dusting": { "status": "pass", "notes": "" },
+      "item_desk_trash": { "status": "pass", "notes": "" },
+      "item_monitors_keyboards": { "status": "pass", "notes": "" },
+      "item_cable_safety": { "status": "fail", "notes": "Desk 34 trailing cable needs tie" },
+      "item_pantry_fridge": { "status": "pass", "notes": "" },
+      "item_microwave_coffee": { "status": "pass", "notes": "" },
+      "item_sink_dishes": { "status": "pass", "notes": "" },
+      "item_dining_tables": { "status": "pass", "notes": "" },
+      "item_carpet_floor": { "status": "pass", "notes": "" },
+      "item_glass_doors": { "status": "pass", "notes": "" },
+      "item_central_trash": { "status": "pass", "notes": "" }
+    },
+    "submittedAt": "2026-10-01T09:30:00.000Z",
+    "signature": "",
+    "telegramSent": false
+  }
+]

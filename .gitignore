@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production builds
+dist/
+dist-ssr/
+*.local
+
+# Capacitor / Android build outputs
+android/app/build/
+android/.gradle/
+android/build/
+
+# Editor & OS files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
